@@ -34,7 +34,7 @@ class SessionTest
 
     void checkPairings(Session session, int round, String expectedPairs)
     {
-        var expected = new LinkedList<>(names(expectedPairs).collect(toList()));
+        var expected = names(expectedPairs).collect(toCollection(LinkedList::new));
         var pairings = session.getPairings(round);
         pairings.stream()
                 .peek(p -> LOG.debug("{}", p))
