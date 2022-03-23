@@ -3,3 +3,4 @@
 .settings/
 src/site/
 target/
+redis/
