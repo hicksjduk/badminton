@@ -6,19 +6,33 @@ import java.time.LocalDate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import redis.embedded.RedisServer;
+
 class RedisDatastoreTest
 {
+    private static RedisServer server;
     private static RedisDatastore datastore;
 
     @BeforeAll
     static void init()
     {
-        datastore = new RedisDatastore("redis://localhost:6378");
-        datastore.clearPlayers();
-        datastore.clearSessions();
+        int dbPort = 6969;
+        server = RedisServer.builder()
+                .port(dbPort)
+                .setting("maxmemory 128M")
+                .build();
+        server.start();
+        datastore = new RedisDatastore("redis://localhost:%d".formatted(dbPort));
+    }
+
+    @AfterAll
+    static void tearDown()
+    {
+        server.stop();
     }
 
     @Test

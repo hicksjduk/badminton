@@ -54,7 +54,7 @@ public class RedisDatastore
     {
         try (var j = pool.getResource())
         {
-            j.lpop(PLAYERS, Integer.MAX_VALUE);
+            j.del(PLAYERS);
         }
     }
 
