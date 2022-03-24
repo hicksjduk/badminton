@@ -26,27 +26,25 @@ public class RedisDatastore
         this.pool = pool;
     }
 
-    public void add(Player... players)
+    public void add(String... players)
     {
         try (var t = pool.getResource()
                 .multi())
         {
             Stream.of(players)
-                    .map(Player::getName)
                     .forEach(n -> t.rpush("players", n));
             t.exec();
         }
     }
 
-    public Stream<Player> getPlayers()
+    public Stream<String> getPlayers()
     {
         List<String> resp;
         try (var j = pool.getResource())
         {
             resp = j.lrange("players", 0, -1);
         }
-        return resp.stream()
-                .map(Player::new);
+        return resp.stream();
     }
 
     public void clearPlayers()

@@ -21,18 +21,15 @@ class RedisDatastoreTest
     @Test
     void testPlayersAdd()
     {
-        datastore.add(players("Jeremy, Pete, Nigel").toArray(Player[]::new));
-        assertThat(datastore.getPlayers()
-                .map(Player::getName)).containsExactly("Jeremy", "Pete", "Nigel");
-        datastore.add(players("Mike, Denise").toArray(Player[]::new));
-        assertThat(datastore.getPlayers()
-                .map(Player::getName)).containsExactly("Jeremy", "Pete", "Nigel", "Mike", "Denise");
+        datastore.add(players("Jeremy, Pete, Nigel").toArray(String[]::new));
+        assertThat(datastore.getPlayers()).containsExactly("Jeremy", "Pete", "Nigel");
+        datastore.add(players("Mike, Denise").toArray(String[]::new));
+        assertThat(datastore.getPlayers()).containsExactly("Jeremy", "Pete", "Nigel", "Mike", "Denise");
     }
 
-    private Stream<Player> players(String names)
+    private Stream<String> players(String names)
     {
-        return Stream.of(names.split("\\s*,\\s*"))
-                .map(Player::new);
+        return Stream.of(names.split("\\s*,\\s*"));
     }
 
 }

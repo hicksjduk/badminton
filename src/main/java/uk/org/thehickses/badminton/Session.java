@@ -23,21 +23,21 @@ public class Session
     private static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy");
 
     private LocalDate date;
-    private final List<Player> players = new ArrayList<>();
-    private final List<List<Pair<Player, Player>>> pairings = new ArrayList<>();
+    private final List<String> players = new ArrayList<>();
+    private final List<List<Pair<String, String>>> pairings = new ArrayList<>();
 
     Session()
     {
 
     }
 
-    public Session(LocalDate date, List<Player> players)
+    public Session(LocalDate date, List<String> Strings)
     {
         this.date = date;
-        this.players.addAll(players);
+        this.players.addAll(Strings);
     }
 
-    public List<Pair<Player, Player>> getPairings(int round)
+    public List<Pair<String, String>> getPairings(int round)
     {
         var currentCount = pairings.size();
         var roundsNeeded = round - currentCount + 1;
@@ -56,29 +56,29 @@ public class Session
         return pairings.get(round);
     }
 
-    private Comparator<Pair<Player, Player>> posComparator(int roundNo)
+    private Comparator<Pair<String, String>> posComparator(int roundNo)
     {
         var round = pairings.get(roundNo - 1);
         var positions = IntStream.range(0, round.size())
                 .mapToObj(i -> Pair.of(i, round.get(i)))
-                .flatMap(this::playerPositions)
+                .flatMap(this::StringPositions)
                 .collect(toMap(Pair::getRight, Pair::getLeft));
         return Comparator.comparingInt(positionGetter(positions))
                 .reversed();
     }
 
-    private Stream<Pair<Integer, Player>> playerPositions(
-            Pair<Integer, Pair<Player, Player>> pairPositions)
+    private Stream<Pair<Integer, String>> StringPositions(
+            Pair<Integer, Pair<String, String>> pairPositions)
     {
         var pos = pairPositions.getLeft();
-        var player1 = pairPositions.getRight()
+        var String1 = pairPositions.getRight()
                 .getLeft();
-        var player2 = pairPositions.getRight()
+        var String2 = pairPositions.getRight()
                 .getRight();
-        return Stream.of(Pair.of(pos, player1), Pair.of(pos, player2));
+        return Stream.of(Pair.of(pos, String1), Pair.of(pos, String2));
     }
 
-    private ToIntFunction<Pair<Player, Player>> positionGetter(Map<Player, Integer> pos)
+    private ToIntFunction<Pair<String, String>> positionGetter(Map<String, Integer> pos)
     {
         return pair ->
             {
@@ -107,28 +107,19 @@ public class Session
         date = LocalDate.parse(str, dateFormatter);
     }
 
-    public List<Player> getPlayers()
+    public List<String> getPlayers()
     {
         return players;
     }
 
     @JsonProperty("players")
-    public List<String> getPlayerNames()
-    {
-        return players.stream()
-                .map(Player::getName)
-                .toList();
-    }
-
-    @JsonProperty("players")
-    public void setPlayerNames(List<String> names)
+    public void setPlayers(List<String> names)
     {
         players.addAll(names.stream()
-                .map(Player::new)
                 .toList());
     }
 
-    public List<List<Pair<Player, Player>>> getPairings()
+    public List<List<Pair<String, String>>> getPairings()
     {
         return pairings;
     }
@@ -138,10 +129,7 @@ public class Session
     {
         return pairings.stream()
                 .map(r -> r.stream()
-                        .map(p -> List.of(p.getLeft()
-                                .getName(),
-                                p.getRight()
-                                        .getName()))
+                        .map(p -> List.of(p.getLeft(), p.getRight()))
                         .toList())
                 .toList();
     }
@@ -152,7 +140,7 @@ public class Session
         pairings.addAll(pLists.stream()
                 .map(r -> r.stream()
                         .map(ArrayDeque::new)
-                        .map(p -> Pair.of(new Player(p.pop()), new Player(p.pop())))
+                        .map(p -> Pair.of(new String(p.pop()), new String(p.pop())))
                         .toList())
                 .toList());
     }

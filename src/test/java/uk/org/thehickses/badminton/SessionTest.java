@@ -1,7 +1,7 @@
 package uk.org.thehickses.badminton;
 
-import static org.assertj.core.api.Assertions.*;
 import static java.util.stream.Collectors.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -21,8 +21,7 @@ class SessionTest
     {
         var players = names(
                 "Jeremy, Nigel, Teresa, Hannah, Helen, Katie, Kimberley, Denise, Mike, Sophie")
-                        .map(Player::new)
-                        .collect(toList());
+                        .toList();
         var session = new Session(LocalDate.of(2022, 3, 16), players);
         checkPairings(session, 0,
                 "Sophie, Jeremy, Nigel, Mike, Teresa, Denise, Hannah, Kimberley, Helen, Katie");
@@ -38,10 +37,8 @@ class SessionTest
         var pairings = session.getPairings(round);
         pairings.stream()
                 .peek(p -> LOG.debug("{}", p))
-                .sorted(Comparator.comparingInt(p -> expected.indexOf(p.getLeft()
-                        .getName())))
+                .sorted(Comparator.comparingInt(p -> expected.indexOf(p.getLeft())))
                 .flatMap(p -> Stream.of(p.getLeft(), p.getRight()))
-                .map(Player::getName)
                 .forEach(n -> assertThat(n).isEqualTo(expected.pop()));
         LOG.debug("");
     }

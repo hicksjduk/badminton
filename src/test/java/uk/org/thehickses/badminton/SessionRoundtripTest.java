@@ -27,10 +27,9 @@ class SessionRoundtripTest
         assertThat(inputSession.getPairings()).containsExactlyElementsOf(session.getPairings());
     }
 
-    private List<Player> players(String names)
+    private List<String> players(String names)
     {
         return Stream.of(names.split("\\s*,\\s*"))
-                .map(Player::new)
                 .toList();
     }
 
