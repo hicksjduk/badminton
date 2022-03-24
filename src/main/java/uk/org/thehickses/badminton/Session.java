@@ -25,6 +25,11 @@ public class Session
     private LocalDate date;
     private final List<String> players = new ArrayList<>();
     private final List<List<Pair<String, String>>> pairings = new ArrayList<>();
+    
+    public static String dateString(LocalDate d)
+    {
+        return d.format(dateFormatter);
+    }
 
     Session()
     {
@@ -98,7 +103,7 @@ public class Session
     @JsonProperty("date")
     public String getDateString()
     {
-        return date.format(dateFormatter);
+        return dateString(date);
     }
 
     @JsonProperty("date")
