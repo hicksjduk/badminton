@@ -12,6 +12,8 @@ import redis.clients.jedis.JedisPool;
 
 public class RedisDatastore
 {
+    private static final String SESSIONS = "sessions";
+    private static final String PLAYERS = "players";
     private final JedisPool pool;
 
     private static JedisPool pool(String uri)
@@ -32,12 +34,9 @@ public class RedisDatastore
 
     public void add(String... players)
     {
-        try (var t = pool.getResource()
-                .multi())
+        try (var j = pool.getResource())
         {
-            Stream.of(players)
-                    .forEach(n -> t.rpush("players", n));
-            t.exec();
+            j.rpush(PLAYERS, players);;
         }
     }
 
@@ -46,7 +45,7 @@ public class RedisDatastore
         List<String> resp;
         try (var j = pool.getResource())
         {
-            resp = j.lrange("players", 0, -1);
+            resp = j.lrange(PLAYERS, 0, -1);
         }
         return resp.stream();
     }
@@ -55,7 +54,7 @@ public class RedisDatastore
     {
         try (var j = pool.getResource())
         {
-            j.lpop("players", Integer.MAX_VALUE);
+            j.lpop(PLAYERS, Integer.MAX_VALUE);
         }
     }
 
@@ -63,7 +62,7 @@ public class RedisDatastore
     {
         try (var j = pool.getResource())
         {
-            j.hset("sessions", s.getDateString(), new ObjectMapper().writeValueAsString(s));
+            j.hset(SESSIONS, s.getDateString(), new ObjectMapper().writeValueAsString(s));
         }
         catch (JsonProcessingException e)
         {
@@ -76,7 +75,7 @@ public class RedisDatastore
         String json;
         try (var j = pool.getResource())
         {
-            json = j.hget("sessions", Session.dateString(d));
+            json = j.hget(SESSIONS, Session.dateString(d));
         }
         if (json == null)
             return null;
@@ -94,7 +93,7 @@ public class RedisDatastore
     {
         try (var j = pool.getResource())
         {
-            j.del("sessions");
+            j.del(SESSIONS);
         }
     }
 }
