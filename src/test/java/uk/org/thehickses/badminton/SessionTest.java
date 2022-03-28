@@ -24,11 +24,11 @@ class SessionTest
                         .toList();
         var session = new Session(LocalDate.of(2022, 3, 16), players);
         checkPairings(session, 0,
-                "Sophie, Jeremy, Nigel, Mike, Teresa, Denise, Hannah, Kimberley, Helen, Katie");
+                "Nigel, Mike, Teresa, Denise, Hannah, Kimberley, Helen, Katie, Jeremy, Sophie");
         checkPairings(session, 1,
-                "Sophie, Mike, Jeremy, Denise, Nigel, Kimberley, Teresa, Katie, Hannah, Helen");
+                "Jeremy, Denise, Nigel, Kimberley, Teresa, Katie, Hannah, Helen, Mike, Sophie");
         checkPairings(session, 2,
-                "Sophie, Denise, Mike, Kimberley, Jeremy, Katie, Nigel, Helen, Teresa, Hannah");
+                "Mike, Kimberley, Jeremy, Katie, Nigel, Helen, Teresa, Hannah, Denise, Sophie");
     }
 
     void checkPairings(Session session, int round, String expectedPairs)

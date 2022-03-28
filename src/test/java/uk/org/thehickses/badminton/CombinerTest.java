@@ -22,7 +22,7 @@ class CombinerTest
         var result = Combiner.combine(IntStream.range(0, count)
                 .boxed())
                 .limit(count % 2 == 0 ? count - 1 : count);
-        check(result, count / 2, count - 1);
+        check(result, (count+1) / 2, count - 1);
     }
 
     static Stream<Arguments> testCombine()
@@ -44,6 +44,7 @@ class CombinerTest
         uniqueValueCountsPerSet.forEach(c -> assertThat(c).isEqualTo(expectedCombsPerSet * 2));
         var partnersByValue = Stream.of(array)
                 .flatMap(Stream::of)
+                .filter(p -> p.getRight() != null)
                 .flatMap(p -> Stream.of(p, Pair.of(p.getRight(), p.getLeft())))
                 .collect(groupingBy(Pair::getLeft, mapping(Pair::getRight, toSet())));
         partnersByValue.values()

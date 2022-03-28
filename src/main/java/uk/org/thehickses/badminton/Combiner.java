@@ -37,10 +37,10 @@ public class Combiner
     {
         var work = new ArrayDeque<>(polygon);
         var builder = Stream.<Pair<T, T>> builder();
-        if (extra != null)
-            builder.add(Pair.of(extra, work.pop()));
+        var lastPair = Pair.of(work.pop(), extra);
         while (work.size() > 1)
             builder.add(Pair.of(work.removeFirst(), work.removeLast()));
+        builder.add(lastPair);
         polygon.addFirst(polygon.removeLast());
         return builder.build();
     }

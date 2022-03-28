@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.ToIntFunction;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -25,7 +26,7 @@ public class Session
     private LocalDate date;
     private final List<String> players = new ArrayList<>();
     private final List<List<Pair<String, String>>> pairings = new ArrayList<>();
-    
+
     public static String dateString(LocalDate d)
     {
         return d.format(dateFormatter);
@@ -55,7 +56,7 @@ public class Session
                     .peek(Collections::shuffle)
                     .toList();
             pairings.addAll(pairs);
-            IntStream.range(Math.max(1, currentCount), pairings.size())
+            IntStream.range(Math.max(0, currentCount), pairings.size())
                     .forEach(i -> Collections.sort(pairings.get(i), posComparator(i)));
         }
         return pairings.get(round);
@@ -63,35 +64,39 @@ public class Session
 
     private Comparator<Pair<String, String>> posComparator(int roundNo)
     {
+        Comparator<Pair<String, String>> singletonLast = Comparator.comparing(Pair::getRight,
+                Comparator.comparing(Objects::isNull));
+        if (roundNo == 0)
+            return singletonLast;
         var round = pairings.get(roundNo - 1);
         var positions = IntStream.range(0, round.size())
                 .mapToObj(i -> Pair.of(i, round.get(i)))
                 .flatMap(this::StringPositions)
                 .collect(toMap(Pair::getRight, Pair::getLeft));
-        return Comparator.comparingInt(positionGetter(positions))
-                .reversed();
+        return singletonLast.thenComparing(Comparator.comparingInt(positionGetter(positions))
+                .reversed());
     }
 
     private Stream<Pair<Integer, String>> StringPositions(
             Pair<Integer, Pair<String, String>> pairPositions)
     {
         var pos = pairPositions.getLeft();
-        var String1 = pairPositions.getRight()
+        var s1 = pairPositions.getRight()
                 .getLeft();
-        var String2 = pairPositions.getRight()
+        var s2 = pairPositions.getRight()
                 .getRight();
-        return Stream.of(Pair.of(pos, String1), Pair.of(pos, String2));
+        return Stream.of(Pair.of(pos, s1), Pair.of(pos, s2));
     }
 
     private ToIntFunction<Pair<String, String>> positionGetter(Map<String, Integer> pos)
     {
         return pair ->
             {
-                var pos1 = pos.getOrDefault(pair.getLeft(), 0);
-                var pos2 = pos.getOrDefault(pair.getRight(), 0);
+                var pos1 = pos.get(pair.getLeft());
+                var pos2 = pos.get(pair.getRight());
                 if (pos1 < pos2)
-                    return pos2 * 100 + pos1;
-                return pos1 * 100 + pos2;
+                    return pos2 * 1000 + pos1;
+                return pos1 * 1000 + pos2;
             };
     }
 
@@ -134,7 +139,9 @@ public class Session
     {
         return pairings.stream()
                 .map(r -> r.stream()
-                        .map(p -> List.of(p.getLeft(), p.getRight()))
+                        .map(p -> Stream.of(p.getLeft(), p.getRight())
+                                .filter(Objects::nonNull)
+                                .toList())
                         .toList())
                 .toList();
     }
@@ -145,7 +152,7 @@ public class Session
         pairings.addAll(pLists.stream()
                 .map(r -> r.stream()
                         .map(ArrayDeque::new)
-                        .map(p -> Pair.of(new String(p.pop()), new String(p.pop())))
+                        .map(p -> Pair.of(p.pop(), p.poll()))
                         .toList())
                 .toList());
     }
