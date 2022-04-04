@@ -12,11 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Session
@@ -26,15 +28,25 @@ public class Session
     private LocalDate date;
     private final List<String> players = new ArrayList<>();
     private final List<List<Pair<String, String>>> pairings = new ArrayList<>();
+    private int round = -1;
 
-    public static String dateString(LocalDate d)
+    public static String formatDate(LocalDate d)
     {
         return d.format(dateFormatter);
     }
 
+    public static LocalDate parseDate(String str)
+    {
+        return LocalDate.parse(str, dateFormatter);
+    }
+
     Session()
     {
+    }
 
+    public Session(LocalDate date)
+    {
+        this(date, List.of());
     }
 
     public Session(LocalDate date, List<String> Strings)
@@ -92,8 +104,8 @@ public class Session
     {
         return pair ->
             {
-                var pos1 = pos.get(pair.getLeft());
-                var pos2 = pos.get(pair.getRight());
+                var pos1 = pos.getOrDefault(pair.getLeft(), 99);
+                var pos2 = pos.getOrDefault(pair.getRight(), 99);
                 if (pos1 < pos2)
                     return pos2 * 1000 + pos1;
                 return pos1 * 1000 + pos2;
@@ -108,13 +120,13 @@ public class Session
     @JsonProperty("date")
     public String getDateString()
     {
-        return dateString(date);
+        return formatDate(date);
     }
 
     @JsonProperty("date")
     public void setDateString(String str)
     {
-        date = LocalDate.parse(str, dateFormatter);
+        date = parseDate(str);
     }
 
     public List<String> getPlayers()
@@ -125,8 +137,8 @@ public class Session
     @JsonProperty("players")
     public void setPlayers(List<String> names)
     {
-        players.addAll(names.stream()
-                .toList());
+        players.clear();
+        players.addAll(names);
     }
 
     public List<List<Pair<String, String>>> getPairings()
@@ -155,5 +167,37 @@ public class Session
                         .map(p -> Pair.of(p.pop(), p.poll()))
                         .toList())
                 .toList());
+    }
+    
+    public void setPairingStrings(List<String> ps) {}
+
+    @JsonIgnore
+    public List<String> getPairingStrings()
+    {
+        var answer = new ArrayList<String>();
+        if (round < 0)
+            return answer;
+        var players = getPairings(round).stream()
+                .flatMap(p -> Stream.of(p.getLeft(), p.getRight()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayDeque::new));
+        while (players.size() >= 4)
+            answer.add("%s & %s  v  %s & %s".formatted(Stream.generate(players::pop)
+                    .limit(4)
+                    .toArray()));
+        if (!players.isEmpty())
+            answer.add(players.stream()
+                    .collect(Collectors.joining(", ")));
+        return answer;
+    }
+
+    public int getRound()
+    {
+        return round;
+    }
+
+    public void setRound(int round)
+    {
+        this.round = round;
     }
 }

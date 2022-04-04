@@ -75,7 +75,7 @@ public class RedisDatastore
         String json;
         try (var j = pool.getResource())
         {
-            json = j.hget(SESSIONS, Session.dateString(d));
+            json = j.hget(SESSIONS, Session.formatDate(d));
         }
         if (json == null)
             return null;
