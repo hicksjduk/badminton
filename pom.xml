@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<name>badminton</name>
-	<description>A simple badminton.</description>
+	<description>A generator for the order of play at badminton.</description>
 	<!-- FIXME change it to the project's website -->
 	<url>http://www.example.com</url>
 
@@ -76,4 +76,13 @@
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
