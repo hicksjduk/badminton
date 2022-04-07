@@ -18,8 +18,12 @@ ${p}
 </tr>
 </table>
 <p>
+<#-->
 <input type="submit" name="action" value="Prev"/>
+<-->
+<!--
 ${round + 1}
+-->
 <input type="submit" name="action" value="Next"/>
 </form>
 <b>
