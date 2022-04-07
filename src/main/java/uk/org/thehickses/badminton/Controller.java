@@ -58,7 +58,19 @@ public class Controller
 
     private static void nextProcessor(HttpServletRequest req, Session session)
     {
-        var round = session.getRound() + 1;
+        changeRound(session, 1);
+    }
+
+    private static void prevProcessor(HttpServletRequest req, Session session)
+    {
+        changeRound(session, -1);
+    }
+
+    private static void changeRound(Session session, int increment)
+    {
+        var round = session.getRound() + increment;
+        if (round < 0)
+            return;
         session.setRound(round);
         session.getPairings(round);
     }
@@ -68,7 +80,8 @@ public class Controller
         Init(),
         Select(),
         Save(Controller::playersProcessor),
-        Next(Controller::playersProcessor, Controller::nextProcessor);
+        Next(Controller::playersProcessor, Controller::nextProcessor),
+        Prev(Controller::playersProcessor, Controller::prevProcessor);
 
         BiConsumer<HttpServletRequest, Session>[] processors;
 

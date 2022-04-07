@@ -57,6 +57,8 @@ public class Session
 
     public List<Pair<String, String>> getPairings(int round)
     {
+        if (round < 0)
+            return new ArrayList<>();
         var currentCount = pairings.size();
         var roundsNeeded = round - currentCount + 1;
         if (roundsNeeded > 0)

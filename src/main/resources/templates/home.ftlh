@@ -2,7 +2,6 @@
 <input name="date" value="${dateString}">
 <input type="submit" name="action" value="Select">
 <p>
-<#assign round=pairings?size-1/>
 <table>
 <tr><td>Players</td></tr>
 <tr>
@@ -19,6 +18,8 @@ ${p}
 </tr>
 </table>
 <p>
+<input type="submit" name="action" value="Prev"/>
+${round + 1}
 <input type="submit" name="action" value="Next"/>
 </form>
 <b>
