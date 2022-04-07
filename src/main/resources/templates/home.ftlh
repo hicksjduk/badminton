@@ -3,8 +3,8 @@
 <meta name="viewport" content="width=100, initial-scale=1">
 </head>
 <form href="/" method="POST">
-<input type="date" name="date" value="${dateString}">
-<input type="submit" name="action" value="Select">
+<input type="date" name="date" value="${dateString}" onchange="selectbutton.click()">
+<input type="submit" name="action" value="Select" id="selectbutton" hidden="true">
 <p>
 <table>
 <tr><td>Players</td></tr>
