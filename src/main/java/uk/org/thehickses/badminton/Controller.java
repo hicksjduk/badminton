@@ -32,7 +32,7 @@ public class Controller
     @RequestMapping(path = "/", method = RequestMethod.POST)
     public String homePost(HttpServletRequest req) throws Exception
     {
-        var date = Session.parseDate(req.getParameter("date"));
+        var date = LocalDate.parse(req.getParameter("date"));
         var action = Action.valueOf(req.getParameter("action"));
         return process(date, req, action);
     }

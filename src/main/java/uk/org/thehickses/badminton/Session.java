@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Session
 {
-    private static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d MMM yyyy");
+    private static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private LocalDate date;
     private final List<String> players = new ArrayList<>();
@@ -122,7 +122,7 @@ public class Session
     @JsonProperty("date")
     public String getDateString()
     {
-        return formatDate(date);
+        return date.format(dateFormatter);
     }
 
     @JsonProperty("date")
