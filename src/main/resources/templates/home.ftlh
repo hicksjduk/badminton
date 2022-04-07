@@ -1,3 +1,7 @@
+<head>
+<title>Badminton</title>
+<meta name="viewport" content="width=100, initial-scale=1">
+</head>
 <form href="/" method="POST">
 <input name="date" value="${dateString}">
 <input type="submit" name="action" value="Select">
