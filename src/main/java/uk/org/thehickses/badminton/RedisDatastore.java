@@ -19,7 +19,7 @@ public class RedisDatastore
     private static JedisPool pool(String uri)
     {
         var u = URI.create(uri);
-        return new JedisPool(u.getHost(), u.getPort());
+        return new JedisPool(u);
     }
 
     public RedisDatastore(String uri)
