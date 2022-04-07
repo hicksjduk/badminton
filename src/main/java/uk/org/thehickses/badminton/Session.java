@@ -182,7 +182,7 @@ public class Session
                 .filter(Objects::nonNull)
                 .collect(Collectors.toCollection(ArrayDeque::new));
         while (players.size() >= 4)
-            answer.add("%s & %s  v  %s & %s".formatted(Stream.generate(players::pop)
+            answer.add("%s & %s vs %s & %s".formatted(Stream.generate(players::pop)
                     .limit(4)
                     .toArray()));
         if (!players.isEmpty())

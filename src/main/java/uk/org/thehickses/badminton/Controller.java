@@ -1,6 +1,8 @@
 package uk.org.thehickses.badminton;
 
 import java.time.LocalDate;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,31 +26,62 @@ public class Controller
     public String homeGet(HttpServletRequest req) throws Exception
     {
         var date = LocalDate.now();
-        var session = datastore.getSession(date);
-        if (session == null)
-            datastore.upsert(session = new Session(date));
-        return templater.applyTemplate("home.ftlh", session);
+        return process(date, req, Action.Init);
     }
 
     @RequestMapping(path = "/", method = RequestMethod.POST)
     public String homePost(HttpServletRequest req) throws Exception
     {
         var date = Session.parseDate(req.getParameter("date"));
-        var session = datastore.getSession(date);
-        if (session == null)
-            session = new Session(date);
-        var players = Stream.of(req.getParameter("players")
+        var action = Action.valueOf(req.getParameter("action"));
+        return process(date, req, action);
+    }
+
+    private String process(LocalDate date, HttpServletRequest req, Action action) throws Exception
+    {
+        var session = Optional.ofNullable(datastore.getSession(date))
+                .orElse(new Session(date));
+        action.process(req, session);
+        datastore.upsert(session);
+        return templater.applyTemplate("home.ftlh", session);
+    }
+
+    private static void playersProcessor(HttpServletRequest req, Session session)
+    {
+        session.setPlayers(Stream.of(req.getParameter("players")
                 .split("(?m)\\s+"))
                 .filter(StringUtils::isNotBlank)
                 .distinct()
-                .toList();
-        session.setPlayers(players);
-        if (req.getParameter("action")
-                .equals("Next"))
-            session.setRound(session.getRound() + 1);
-        datastore.upsert(session);
-        var answer = templater.applyTemplate("home.ftlh", session);
-        return answer;
+                .toList());
+        session.getPairings(session.getRound());
     }
 
+    private static void nextProcessor(HttpServletRequest req, Session session)
+    {
+        var round = session.getRound() + 1;
+        session.setRound(round);
+        session.getPairings(round);
+    }
+
+    private static enum Action
+    {
+        Init(),
+        Select(),
+        Save(Controller::playersProcessor),
+        Next(Controller::playersProcessor, Controller::nextProcessor);
+
+        BiConsumer<HttpServletRequest, Session>[] processors;
+
+        @SafeVarargs
+        private Action(BiConsumer<HttpServletRequest, Session>... processors)
+        {
+            this.processors = processors;
+        }
+
+        public void process(HttpServletRequest req, Session session)
+        {
+            Stream.of(processors)
+                    .forEach(p -> p.accept(req, session));
+        }
+    }
 }
