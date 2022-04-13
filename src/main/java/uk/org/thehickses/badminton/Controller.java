@@ -131,6 +131,7 @@ public class Controller
                 .split(","))
                 .filter(StringUtils::isNotEmpty)
                 .map(String::trim)
+                .map(s -> s.replaceAll("\\s\\s+", " "))
                 .distinct()
                 .toArray(String[]::new);
         datastore.replacePlayers(players);
