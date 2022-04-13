@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import redis.embedded.RedisServer;
@@ -35,14 +36,30 @@ class RedisDatastoreTest
         server.stop();
     }
 
+    @BeforeEach
+    void clear()
+    {
+        datastore.clearPlayers();
+        datastore.clearSessions();
+    }
+
     @Test
     void testPlayersAdd()
     {
-        datastore.add(players("Jeremy, Pete, Nigel").toArray(String[]::new));
+        datastore.addPlayers(players("Jeremy, Pete, Nigel").toArray(String[]::new));
         assertThat(datastore.getPlayers()).containsExactly("Jeremy", "Pete", "Nigel");
-        datastore.add(players("Mike, Denise").toArray(String[]::new));
+        datastore.addPlayers(players("Mike, Denise").toArray(String[]::new));
         assertThat(datastore.getPlayers()).containsExactly("Jeremy", "Pete", "Nigel", "Mike",
                 "Denise");
+    }
+
+    @Test
+    void testPlayersReplace()
+    {
+        datastore.addPlayers(players("Jeremy, Pete, Nigel").toArray(String[]::new));
+        assertThat(datastore.getPlayers()).containsExactly("Jeremy", "Pete", "Nigel");
+        datastore.replacePlayers(players("Mike, Denise").toArray(String[]::new));
+        assertThat(datastore.getPlayers()).containsExactly("Mike", "Denise");
     }
 
     private Stream<String> players(String names)
