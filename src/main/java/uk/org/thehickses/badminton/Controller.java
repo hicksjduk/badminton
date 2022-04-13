@@ -26,7 +26,7 @@ public class Controller
     public String homeGet(HttpServletRequest req) throws Exception
     {
         var date = LocalDate.now();
-        return process(date, req, Action.Init);
+        return process(date, req, Action.INIT);
     }
 
     @RequestMapping(path = "/", method = RequestMethod.POST)
@@ -41,7 +41,7 @@ public class Controller
         {
             date = LocalDate.now();
         }
-        var action = Action.valueOf(req.getParameter("action"));
+        var action = Action.valueOf(req.getParameter("action").toUpperCase());
         return process(date, req, action);
     }
 
@@ -85,11 +85,11 @@ public class Controller
 
     private static enum Action
     {
-        Init(),
-        Select(),
-        Save(Controller::playersProcessor),
-        Next(Controller::playersProcessor, Controller::nextProcessor),
-        Prev(Controller::playersProcessor, Controller::prevProcessor);
+        INIT(),
+        DATE(),
+        SAVE(Controller::playersProcessor),
+        NEXT(Controller::playersProcessor, Controller::nextProcessor),
+        PREV(Controller::playersProcessor, Controller::prevProcessor);
 
         BiConsumer<HttpServletRequest, Session>[] processors;
 
