@@ -32,12 +32,20 @@ public class RedisDatastore
         this.pool = pool;
     }
 
-    public void add(String... players)
+    public void addPlayers(String... players)
     {
-        try (var j = pool.getResource())
-        {
-            j.rpush(PLAYERS, players);;
-        }
+        if (players.length > 0)
+            try (var j = pool.getResource())
+            {
+                j.rpush(PLAYERS, players);
+                ;
+            }
+    }
+
+    public void replacePlayers(String... players)
+    {
+        clearPlayers();
+        addPlayers(players);
     }
 
     public Stream<String> getPlayers()
