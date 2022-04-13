@@ -3,20 +3,18 @@
 <meta name="viewport" content="width=100, initial-scale=1">
 <script>
 function selectPlayers() {
-	const existing = enteredplayers.value.split("\n").filter(s => s.length)
-	const selected = [...availableplayers.selectedOptions].map(o => o.value)
-	const toAdd = []
-	selected.forEach(s => {
+	const players = enteredplayers.value.split("\n").filter(s => s.length)
+	const selections = [...availableplayers.selectedOptions].map(o => o.value)
+	selections.forEach(s => {
 	   for (let i = s.indexOf(" "); i <= s.length; i++) {
 	      const str = s.substring(0, i).trim()
-	      if (!existing.includes(str) && !toAdd.includes(str)) {
-	         toAdd.push(str)
-	         break;
+	      if (!players.includes(str)) {
+	         players.push(str)
+	         break
 	      }
 	   }
 	})
-	if (toAdd.length)
-	   enteredplayers.value = [...existing, ...toAdd].join("\n") 
+	enteredplayers.value = [...players].join("\n") 
 }
 </script>
 </head>
