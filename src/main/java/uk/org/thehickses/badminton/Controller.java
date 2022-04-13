@@ -56,7 +56,10 @@ public class Controller
                 .orElse(new Session(date));
         action.process(req, session);
         datastore.upsert(session);
-        return templater.applyTemplate("home.ftlh", session);
+        var players = datastore.getPlayers()
+                .sorted()
+                .toList();
+        return templater.applyTemplate("home.ftlh", new HomePage(session, players));
     }
 
     private static void playersProcessor(HttpServletRequest req, Session session)
@@ -114,7 +117,8 @@ public class Controller
     @RequestMapping(path = "/players", method = RequestMethod.GET)
     public String getPlayerList(HttpServletRequest req, HttpServletResponse res) throws Exception
     {
-        return datastore.getPlayers().collect(Collectors.joining(", "));
+        return datastore.getPlayers()
+                .collect(Collectors.joining(", "));
     }
 
     @RequestMapping(path = "/players", method = RequestMethod.POST)

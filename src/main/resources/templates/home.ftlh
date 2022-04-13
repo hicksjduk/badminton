@@ -3,15 +3,15 @@
 <meta name="viewport" content="width=100, initial-scale=1">
 </head>
 <form href="/" method="POST">
-<input type="date" name="date" value="${dateString}" onchange="dateselect.click()">
+<input type="date" name="date" value="${session.dateString}" onchange="dateselect.click()">
 <input type="submit" name="action" value="Date" id="dateselect" hidden="true">
 <p>
 <table>
 <tr><td>Players</td></tr>
 <tr>
 <td>
-<textarea name="players" cols=20 rows=10>
-<#list players as p>
+<textarea name="players" cols=25 rows=10>
+<#list session.players as p>
 ${p}
 </#list>
 </textarea>
@@ -35,12 +35,12 @@ ${p}
 <input type="submit" name="action" value="Prev"/>
 <-->
 <!--
-${round + 1}
+${session.round + 1}
 -->
 <input type="submit" name="action" value="Next"/>
 </form>
 <b>
-<#list pairingStrings as p>
+<#list session.pairingStrings as p>
 ${p}<br>
 </#list>
 </b>
