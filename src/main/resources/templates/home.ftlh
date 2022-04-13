@@ -10,14 +10,23 @@
 <tr><td>Players</td></tr>
 <tr>
 <td>
-<textarea name="players" cols=25 rows=10>
+<textarea name="players" cols=20 rows=10>
 <#list players as p>
 ${p}
 </#list>
 </textarea>
 </td>
 <td>
+<input type="button" value="&lt;&lt;" style="width: 100%">
+<p>
 <input type="submit" name="action" value="Save"/>
+</td>
+<td style="height: 100%">
+<select multiple="true" style="height: 100%">
+<#list ["Pete Hicks", "Jeremy Hicks", "Mike Pilley"] as p>
+<option value="${p}">${p}</option>
+</#list>
+</select>
 </td>
 </tr>
 </table>
