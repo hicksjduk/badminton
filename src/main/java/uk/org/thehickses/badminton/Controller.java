@@ -53,7 +53,7 @@ public class Controller
     private String process(LocalDate date, HttpServletRequest req, Action action) throws Exception
     {
         var session = Optional.ofNullable(datastore.getSession(date))
-                .orElse(new Session(date));
+                .orElseGet(() -> new Session(date));
         action.process(req, session);
         datastore.upsert(session);
         var players = datastore.getPlayers()
