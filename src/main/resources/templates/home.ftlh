@@ -6,6 +6,11 @@
 	visibility: hidden
 }
 </style>
+<style type= "text/css" media="screen and (min-width: 481px)">
+#mobilemessage {
+	visibility: hidden
+}
+</style>
 <script>
 function selectPlayers() {
 	const players = enteredplayers.value.split("\n").filter(s => s.length)
@@ -23,6 +28,7 @@ function addPlayer(player, existing) {
 }
 </script>
 </head>
+<div id="mobilemessage">Hello mobile!</div>
 <form href="/" method="POST">
 <input type="date" name="date" value="${session.dateString}" onchange="dateselect.click()">
 <input type="submit" name="action" value="Date" id="dateselect" hidden="true">
