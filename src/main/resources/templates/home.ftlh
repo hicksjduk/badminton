@@ -33,12 +33,10 @@ ${p}
 </textarea>
 </td>
 <td>
-<input type="button" value="&lt;&lt;" style="width: 100%" onclick="selectPlayers()">
-<p>
 <input type="submit" name="action" value="Save"/>
 </td>
 <td style="height: 100%">
-<select id="availableplayers" multiple="true" style="height: 100%">
+<select id="availableplayers" multiple style="height: 100%" onchange="selectPlayers()">
 <#list players as p>
 <option value="${p}">${p}</option>
 </#list>
