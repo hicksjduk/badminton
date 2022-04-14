@@ -1,6 +1,11 @@
 <head>
 <title>Badminton</title>
 <meta name="viewport" content="width=100, initial-scale=1">
+<style type= "text/css" media="screen and (max-width: 481px)">
+#availableplayers {
+	visibility: hidden
+}
+</style>
 <script>
 function selectPlayers() {
 	const players = enteredplayers.value.split("\n").filter(s => s.length)
