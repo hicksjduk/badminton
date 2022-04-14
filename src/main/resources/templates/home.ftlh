@@ -5,16 +5,16 @@
 function selectPlayers() {
 	const players = enteredplayers.value.split("\n").filter(s => s.length)
 	const selections = [...availableplayers.selectedOptions].map(o => o.value)
-	selections.forEach(s => {
-	   for (let i = s.indexOf(" "); i <= s.length; i++) {
-	      const str = s.substring(0, i).trim()
-	      if (!players.includes(str)) {
-	         players.push(str)
-	         break
-	      }
-	   }
-	})
+	players.push(...selections.map(s => addPlayer(s, players)))
 	enteredplayers.value = [...players].join("\n") 
+}
+
+function addPlayer(player, existing) {
+	for (let i = player.indexOf(" "); i <= player.length; i++) {
+	   const str = player.substring(0, i).trim()
+	   if (!existing.includes(str))
+	      return str
+	}
 }
 </script>
 </head>
